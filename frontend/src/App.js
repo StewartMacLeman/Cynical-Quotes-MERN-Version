@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import CreateQuoteForm from "./components/forms/CreateQuoteForm";
 import QuotesHeading from "./components/QuotesHeading";
@@ -8,32 +8,33 @@ import EditQuoteForm from "./components/forms/EditQuoteForm";
 import DeleteQuoteForm from "./components/forms/DeleteQuoteForm";
 
 const App = () => {
-  const testData = [
-    {
-      _id: "quote_1",
-      quote:
-        "All you need in life is ignorance and confidence and then succcess is sure.",
-      quoter: "Mark Twain",
-    },
-    {
-      _id: "quote_2",
-      quote: "Life is one long process of getting tired.",
-      quoter: "Samuel Butler",
-    },
-    {
-      _id: "quote_3",
-      quote:
-        "Don't take life too seriously - you will never get out of it alive",
-      quoter: "Elbert Hubbard",
-    },
-  ];
-
+  const [quotes, setQuotes] = useState([]);
+  // ------------------------
   const [modalCover, setModalCover] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [deleteForm, setDeleteForm] = useState(false);
+  // ------------------------
+  const [fetchError, setFetchError] = useState(null);
+  const URL = "http://localhost:5000";
 
   // Read / get the quotes. -------------------------------
-
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(URL);
+        if (!response.ok) {
+          throw Error("The data was not returned!");
+        }
+        const quoteItems = await response.json();
+        setQuotes(quoteItems);
+        setFetchError(null);
+      } catch (error) {
+        setFetchError(error.message);
+      }
+    };
+    fetchItems();
+  }, []);
+  
   // Create a quote. --------------------------------------
   const handleCreateSubmit = (e) => {
     e.preventDefault();
@@ -75,8 +76,9 @@ const App = () => {
       <Header />
       <CreateQuoteForm createSubmit={handleCreateSubmit} />
       <QuotesHeading />
+      {fetchError && <h2>{fetchError}</h2>}
       <QuotesList
-        quotesList={testData}
+        quotesList={quotes}
         showEditForm={showEditForm}
         showDeleteForm={showDeleteForm}
       />

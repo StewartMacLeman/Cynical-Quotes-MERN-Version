@@ -144,7 +144,7 @@ text-align: left;
   border: .15rem solid black;
   background-color: white;
   padding: .5rem;
-  position: absolute;
+  position: fixed;
   top: 30%;
   left: 10%;
   z-index: 2;

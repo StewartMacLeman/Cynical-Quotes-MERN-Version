@@ -4,18 +4,35 @@ import CreateQuoteForm from "./components/forms/CreateQuoteForm";
 import QuotesHeading from "./components/QuotesHeading";
 import QuotesList from "./components/QuotesList";
 import ModalCover from "./components/forms/ModalCover";
+import ReloadButton from "./components/forms/ReloadButton";
 import EditQuoteForm from "./components/forms/EditQuoteForm";
 import DeleteQuoteForm from "./components/forms/DeleteQuoteForm";
 
 const App = () => {
   const [quotes, setQuotes] = useState([]);
   // ------------------------
+  const [newQuote, setNewQuote] = useState("");
+  const [newQuoter, setNewQuoter] = useState("");
+  // ------------------------
   const [modalCover, setModalCover] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [deleteForm, setDeleteForm] = useState(false);
   // ------------------------
+  const [showReload, setShowReload] = useState(false);
+  const [reload, setReload] = useState(false);
   const [fetchError, setFetchError] = useState(null);
   const URL = "http://localhost:5000";
+
+    // Show reload. -------------------------------------------
+    const showReloadModal = () => {
+      setModalCover(true);
+      setShowReload(true);
+    };
+    const handleReload = () => {
+      setModalCover(false);
+      setShowReload(false);
+      setReload((reload) => !reload);
+    };  
 
   // Read / get the quotes. -------------------------------
   useEffect(() => {
@@ -33,12 +50,42 @@ const App = () => {
       }
     };
     fetchItems();
-  }, []);
-  
+  }, [reload]);
+
   // Create a quote. --------------------------------------
+  const createQuote = async (new_quote, new_quoter) => {
+    let newQuoteObject = {
+      quote: new_quote,
+      quoter: new_quoter,
+    };
+    try {
+      await fetch(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newQuoteObject),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleCreateSubmit = (e) => {
     e.preventDefault();
     console.log("The submit button was clicked!");
+    if (
+      (!newQuote && !newQuoter) ||
+      (newQuote && !newQuoter) ||
+      (!newQuote && newQuoter)
+    ) {
+      return;
+    }
+    // Fetch function call!
+    createQuote(newQuote, newQuoter);
+    // -----------------------------------
+    setNewQuote("");
+    setNewQuoter("");
+    showReloadModal();
   };
   // Edit a quote. -----------------------------------------
   const showEditForm = (e) => {
@@ -74,7 +121,13 @@ const App = () => {
   return (
     <>
       <Header />
-      <CreateQuoteForm createSubmit={handleCreateSubmit} />
+      <CreateQuoteForm
+        createSubmit={handleCreateSubmit}
+        newQuote={newQuote}
+        setNewQuote={setNewQuote}
+        newQuoter={newQuoter}
+        setNewQuoter={setNewQuoter}
+      />
       <QuotesHeading />
       {fetchError && <h2>{fetchError}</h2>}
       <QuotesList
@@ -83,6 +136,7 @@ const App = () => {
         showDeleteForm={showDeleteForm}
       />
       {modalCover && <ModalCover />}
+      {showReload && <ReloadButton reloadList={handleReload} />}
       {editForm && (
         <EditQuoteForm cancelEdit={cancelEdit} confirmEdit={confirmEdit} />
       )}

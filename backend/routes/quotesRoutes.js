@@ -53,8 +53,8 @@ router.delete("/", async (req, res) => {
 
 router.put('/', async (req, res) => {
   let id = req.body.id;
-  let editedQuote = req.body.quote_edit;
-  let editedQuoter = req.body.quoter_edit;
+  let editedQuote = req.body.quote_edited;
+  let editedQuoter = req.body.quoter_edited;
   try {
     await client.connect();
     await client.db('cynical_quotes_React').collection('quotes').updateOne({_id: new ObjectId(id)},{ $set: {quote: editedQuote, quoter: editedQuoter}})

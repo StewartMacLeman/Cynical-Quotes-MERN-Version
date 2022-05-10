@@ -15,7 +15,12 @@ const App = () => {
   const [newQuoter, setNewQuoter] = useState("");
   // ------------------------
   const [modalCover, setModalCover] = useState(false);
+  // ------------------------
   const [editForm, setEditForm] = useState(false);
+  const [editId, setEditId] = useState("");
+  const [editedQuote, setEditedQuote] = useState("");
+  const [editedQuoter, setEditedQuoter] = useState("");
+  // ------------------------
   const [deleteForm, setDeleteForm] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   // ------------------------
@@ -24,16 +29,16 @@ const App = () => {
   const [fetchError, setFetchError] = useState(null);
   const URL = "http://localhost:5000";
 
-    // Show reload. -------------------------------------------
-    const showReloadModal = () => {
-      setModalCover(true);
-      setShowReload(true);
-    };
-    const handleReload = () => {
-      setModalCover(false);
-      setShowReload(false);
-      setReload((reload) => !reload);
-    };  
+  // Show reload. -------------------------------------------
+  const showReloadModal = () => {
+    setModalCover(true);
+    setShowReload(true);
+  };
+  const handleReload = () => {
+    setModalCover(false);
+    setShowReload(false);
+    setReload((reload) => !reload);
+  };
 
   // Read / get the quotes. -------------------------------
   useEffect(() => {
@@ -91,17 +96,69 @@ const App = () => {
   // Edit a quote. -----------------------------------------
   const showEditForm = (e) => {
     console.log(e.target.value);
+    let id = e.target.value;
+    let currentQuote =
+      e.target.parentElement.previousSibling.querySelector(
+        ".quote"
+      ).textContent;
+    let currentQuoter =
+      e.target.parentElement.previousSibling.querySelector(".quoter").textContent;
+    setEditId(id);
+    setEditedQuote(currentQuote);
+    setEditedQuoter(currentQuoter);
     setModalCover(true);
     setEditForm(true);
   };
   const cancelEdit = () => {
     setModalCover(false);
     setEditForm(false);
+    setEditId("");
+    setEditedQuote("");
+    setEditedQuoter("");
+  };
+  const editQuote = async (id, edited_Quote, edited_Quoter) => {
+    let editedQuoteObject = {
+      id: id,
+      quote_edited: edited_Quote,
+      quoter_edited: edited_Quoter,
+    };
+    try {
+      await fetch(URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedQuoteObject),
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
   const confirmEdit = (e) => {
     e.preventDefault();
+    // Fetch function call!
+    editQuote(editId, editedQuote, editedQuoter);
+    // -----------------------------------------------
+    let editedObject = {
+      _id: editId,
+      quote: editedQuote,
+      quoter: editedQuoter,
+    };
+    let idArray = quotes.map((item) => item._id);
+    let idIndexNumber = idArray.indexOf(editId);
+    let editedQuotes = quotes.map((item, index) => {
+      if (index == idIndexNumber) {
+        return editedObject;
+      } else {
+        return item;
+      }
+    });
+    setQuotes(editedQuotes);
     setModalCover(false);
     setEditForm(false);
+    setEditId("");
+    setEditedQuote("");
+    setEditedQuoter("");
   };
   // Delete a quote. -----------------------------------------
   const showDeleteForm = (e) => {
@@ -165,7 +222,14 @@ const App = () => {
       {modalCover && <ModalCover />}
       {showReload && <ReloadButton reloadList={handleReload} />}
       {editForm && (
-        <EditQuoteForm cancelEdit={cancelEdit} confirmEdit={confirmEdit} />
+        <EditQuoteForm
+          editedQuote={editedQuote}
+          setEditedQuote={setEditedQuote}
+          editedQuoter={editedQuoter}
+          setEditedQuoter={setEditedQuoter}
+          cancelEdit={cancelEdit}
+          confirmEdit={confirmEdit}
+        />
       )}
       {deleteForm && (
         <DeleteQuoteForm

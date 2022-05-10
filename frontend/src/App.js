@@ -17,6 +17,7 @@ const App = () => {
   const [modalCover, setModalCover] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [deleteForm, setDeleteForm] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
   // ------------------------
   const [showReload, setShowReload] = useState(false);
   const [reload, setReload] = useState(false);
@@ -102,18 +103,44 @@ const App = () => {
     setModalCover(false);
     setEditForm(false);
   };
-  // Edit a quote. -----------------------------------------
+  // Delete a quote. -----------------------------------------
   const showDeleteForm = (e) => {
-    console.log(e.target.value);
+    let id = e.target.value;
+    setDeleteId(id);
     setModalCover(true);
     setDeleteForm(true);
   };
   const cancelDelete = () => {
+    setDeleteId("");
     setModalCover(false);
     setDeleteForm(false);
   };
+  const deleteQuote = async (delId) => {
+    let newQuoteObject = {
+      id: delId,
+    };
+    try {
+      await fetch(URL, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newQuoteObject),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const confirmDelete = (e) => {
     e.preventDefault();
+    // Fetch function call!
+    deleteQuote(deleteId);
+    // ---------------------
+    let amendedQuotes = quotes.filter((quote) => {
+      return quote._id != deleteId;
+    });
+    setQuotes(amendedQuotes);
+    setDeleteId("");
     setModalCover(false);
     setDeleteForm(false);
   };

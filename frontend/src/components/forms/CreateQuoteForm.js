@@ -12,7 +12,7 @@ const CreateQuoteForm = ({createSubmit}) => {
 
         <div className="quoterCont">
           <label htmlFor="quoter">Quoter:</label>
-          <input type="text" id="quoter" autoComplete="off" autoFocus />
+          <input type="text" id="quoter" autoComplete="off" />
         </div>
       </div>
 

@@ -7,7 +7,7 @@ const DeleteQuoteForm = ({cancelDelete, confirmDelete}) => {
       <button type="button" className="delCancel" onClick={cancelDelete}>
         Cancel!
       </button>
-      <button type="submit" className="delConfirm">
+      <button type="submit" className="delete">
         Delete!
       </button>
     </form>

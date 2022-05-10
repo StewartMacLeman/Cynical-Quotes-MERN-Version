@@ -36,12 +36,11 @@ h1, h2, h3, p, li, span, label, input, button {
 button {
   color: white;
   background-color: black;
-  border-radius: 8px;
+  border-radius: .5rem;
 }
 button:hover {
   color: black;
   background-color: white;
-  border-radius: 8px;
   cursor: pointer;
 }
 /* Header styles. -------------------------------------------- */
@@ -119,8 +118,7 @@ text-align: left;
   margin: 0 .5rem;
   min-width: 30%;
 }
-/* Combine these classes? */
-.edit {
+.edit, .delCancel {
   background-color: dodgerblue;
 }
 .delete {
@@ -155,18 +153,6 @@ text-align: left;
 .editModal button, .deleteModal button, .reloadDiv button {
   width: 50%;
 }
-/* Combine these classes? */
-.delCancel {
-  background-color: dodgerblue;
-}
-.delConfirm {
-  background-color: red;
-}
-/* To be removed? */
-/* Hide class. ----------------------------------------------- */
-.hide {
-  display: none;
-}
 /* Media queries. --------------------------------------------- */
 @media screen and (min-width: 1050px) {
   body { width: 80%; }
@@ -181,9 +167,14 @@ text-align: left;
   html { font-size: 8px; }
   button { border-radius: 6px; }
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 400px) and (max-height: 700px) {
   .form button {
     min-width: 60%;
+    margin: .5rem 0;
+    padding: 1rem .15rem;
+  }
+  h3, p, li, span, label, input, button {
+    font-size: 2.5rem;
   }
   .quoterCont, .quoteCont {
     display: flex;
@@ -193,9 +184,20 @@ text-align: left;
   .quoterCont label, .quoterCont input, .quoteCont label, .quoteCont input {
   text-align: center;
   }
-  .editModal, .deleteModal {
+  .quoteButtons button {
+    margin: 0.25rem .5rem;
+    min-width: 40%;
+    padding: 1rem .15rem;
+  }
+  .editModal, .deleteModal, .reloadDiv {
     width: 80vw;
-    height: 60vw;
+    height: 60vh;
+    top: 20%;
+    justify-content: space-evenly;
+  }
+  .editModal button, .deleteModal button, .reloadDiv button {
+    width: 80%;
+    padding: 1rem .15rem;
   }
   .editModal *{
     margin: 0 auto;

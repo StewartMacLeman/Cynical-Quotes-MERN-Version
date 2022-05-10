@@ -78,7 +78,6 @@ const App = () => {
   };
   const handleCreateSubmit = (e) => {
     e.preventDefault();
-    console.log("The submit button was clicked!");
     if (
       (!newQuote && !newQuoter) ||
       (newQuote && !newQuoter) ||
@@ -95,7 +94,6 @@ const App = () => {
   };
   // Edit a quote. -----------------------------------------
   const showEditForm = (e) => {
-    console.log(e.target.value);
     let id = e.target.value;
     let currentQuote =
       e.target.parentElement.previousSibling.querySelector(
